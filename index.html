@@ -412,7 +412,7 @@ const _sm=setMute;setMute=function(m){_sm(m);if(m)try{speechSynthesis.cancel()}c
 $('help').onclick=e=>{e.stopPropagation();const wasP=paused;if(!paused&&state=='play')togglePause();panel(`<h2>🎱 Mama MacGregor's Bingo Hall</h2><p>Proper 75-ball bingo with Mama MacGregor as your caller. <b>Pretend coins only</b> — nothing to buy, and Mama refills your coins for free.</p>
 <h3>How to play</h3><p>• Pick a room and 1–4 cards. Columns are B (1–15), I (16–30), N (31–45), G (46–60), O (61–75); the centre is free.<br>• Mama calls a ball every few seconds. With <b>auto-daub</b> she marks them; otherwise tap each called number.<br>• Complete the game's pattern (shown at the top) and tap <b>BINGO!</b> fast — the other players in the hall can win first!</p>
 <h3>Power-ups</h3><p>Fill the gold meter by daubing to earn them:<br>🐮 <b>Highland Hoof Stomp</b> — daubs a random square on every card<br>🐑 <b>Lamb's Luck</b> — daub any square you like<br>🕊 <b>Dove's Peek</b> — see the next 3 balls<br>🫏 <b>Donkey Double</b> — doubles this game's prize</p>
-<h3>Rooms</h3><p>Level up to open the Highland Barn (3), Donkey Sanctuary (5), Lambing Shed (8) and Cathedral Grand Hall (12).</p><p>Keys: B = bingo, P = pause, M = mute.</p>`,()=>{if(!wasP&&paused)togglePause()})};
+<h3>Rooms</h3><p>Level up to open the Highland Barn (3), Donkey Sanctuary (5), Lambing Shed (8) and Cathedral Grand Hall (12).</p><p>Keys: B = bingo, P = pause, M = mute.</p><h3 class="gp-help">🎮 Controller</h3><p class="gp-help">Stick moves the pointer and A daubs or taps. LB / RB jump the pointer between buttons. X or Y calls BINGO, Start pause, Select mute. Menus: D-pad to pick, A to select, B to go back.</p>`,()=>{if(!wasP&&paused)togglePause()})};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)try{speechSynthesis.cancel()}catch(e){}});
 let lastT=0;function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-lastT)/1000||0);lastT=now;if(!paused&&!panelOpen)update(dt);render()}
 resizeCanvas();chrome(true);requestAnimationFrame(t=>{lastT=t;frame(t)});
@@ -670,4 +670,21 @@ window.PALB=api})();
 #palbList li{min-height:30px;height:auto!important;font-size:16px!important}
 .tb{width:46px!important;height:46px!important}#mute{right:55px!important}#help{right:104px!important}
 </style>
+<!-- gamepad:start -->
+<script src="gamepad.js?v=1"></script>
+<script>
+(function(){if(typeof btn==='function'){var _b=btn;btn=function(x,y,w,h,label){var n=menuBtns.length,r=_b.apply(this,arguments);if(menuBtns.length>n&&typeof label==='string')menuBtns[menuBtns.length-1].label=label;return r}}})();
+GamepadSupport.init({
+ keys:{start:'KeyP',back:'KeyM',x:'KeyB',y:'KeyB'},
+ menuKeys:{a:'Enter'},
+ noRepeat:['a','b','x','y','lb','rb','start','back'],
+ ignoreSel:'#dock,#mute,#pause,#help,#inst,#ios,.tb,#dockHint',
+ backSel:'#pclose',
+ menu:function(){var ov=!!document.querySelector('#palbOv.on,#smpLock.on');return ov||panelOpen||paused||state!=='play';},
+ cursor:function(){return !document.querySelector('#palbOv.on,#smpLock.on')&&!panelOpen&&!paused&&(state==='play');},
+ items:GamepadSupport.list(function(){return (document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)?[]:menuBtns;},{scale:function(){return SC},origin:function(){return [OXs,OYs]}}),
+ back:function(){if(document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)return false;var b=menuBtns.filter(function(x){return /^\W*(back|close|menu|done|✕|×)\W*$/i.test(x.label||'')})[0];if(b){b.fn();return true}return false;}
+});
+</script>
+<!-- gamepad:end -->
 </body></html>
